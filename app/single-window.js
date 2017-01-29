@@ -1,5 +1,6 @@
 const libpath = require('path');
-const {BrowserWindow} = require('electron');
+const menu = require('./menu');
+const {BrowserWindow, Menu} = require('electron');
 
 module.exports = class SingleWindow {
 	constructor() {
@@ -15,6 +16,7 @@ module.exports = class SingleWindow {
 		});
 		window.loadURL(`file://${libpath.join(__dirname, 'dst/index.html')}`);
 		window.on('closed', this.onClosed.bind(this));
+		Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 	}
 
 	onClosed() {
