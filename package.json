@@ -1,0 +1,31 @@
+{
+  "name": "jkfiddle",
+  "version": "0.0.1",
+  "description": "Test your JavaScript, SCSS, Pug on Electron",
+  "main": "app/index.js",
+  "scripts": {
+    "pug": "./node_modules/.bin/pug --hierarchy -o app/dst/ src/",
+    "scss": "./node_modules/node-sass/bin/node-sass src/index.scss app/dst/index.css --output-style compressed",
+    "webpack": "./node_modules/.bin/webpack",
+    "build": "yarn run pug && yarn run scss && yarn run webpack",
+    "build:dev": "yarn run pug &&  yarn run scss && yarn run webpack -- -d",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Hiroki Usuba <hrky0206@gmail.com> (http://mimorisuzuko.github.io/)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "clean-webpack-plugin": "^0.1.15",
+    "node-sass": "^4.4.0",
+    "pug-cli": "^1.0.0-alpha6",
+    "webpack": "^1.14.0"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  }
+}
