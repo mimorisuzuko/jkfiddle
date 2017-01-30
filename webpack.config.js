@@ -19,6 +19,10 @@ module.exports = {
 				query: {
 					presets: ['react', 'es2015'],
 				}
+			},
+			{
+				test: /\.txt$/,
+				loader: 'raw-loader'
 			}
 		]
 	},
@@ -52,7 +56,7 @@ module.exports = {
 	},
 	target: 'electron',
 	node: {
-		__filename: true,
-		__dirname: true
+		__filename: false,
+		__dirname: false
 	}
 };

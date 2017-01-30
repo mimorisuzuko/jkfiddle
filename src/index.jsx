@@ -19,6 +19,7 @@ class App extends Component {
 		const {state: {items}} = this;
 		const index = items.get('index');
 		const content = items.get('contents')[index];
+		const sideWidth = 68;
 
 		return (
 			<div style={{
@@ -27,8 +28,8 @@ class App extends Component {
 				width: '100%',
 				height: '100%'
 			}}>
-				<Side width={68} items={items} />
-				<Body content={content} />
+				<Side width={sideWidth} items={items} />
+				<Body content={content} dwidth={sideWidth} />
 			</div>
 		);
 	}
