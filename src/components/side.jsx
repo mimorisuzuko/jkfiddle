@@ -1,26 +1,32 @@
 const _ = require('lodash');
 const React = require('react');
-const {lblack: backgroundColor, white, dwhite} = require('../color.jsx');
+const {lblack, llblack, white, dwhite} = require('../color.jsx');
 const {Component} = React;
 
 class Side extends Component {
 	render() {
 		const {props: {width, items}} = this;
 		const index = items.get('index');
-		const contents = _.map(items.get('contents'), ({display}, i) => (
-			<li onClick={this.onClickItem.bind(this, i)} style={{
-				color: i === index ? white : dwhite,
-				paddingLeft: 5,
-				cursor: 'pointer'
-			}}>
-				# {display}
-			</li>
-		));
+		const contents = _.map(items.get('contents'), ({display}, i) => {
+			const selected = i === index;
+
+			return (
+				<li onClick={this.onClickItem.bind(this, i)} style={{
+					color: selected ? white : dwhite,
+					padding: '3px 6px',
+					fontSize: '0.8em',
+					cursor: 'pointer',
+					backgroundColor: selected ? llblack : lblack
+				}}>
+					# {display}
+				</li>
+			);
+		});
 
 		return (
 			<div style={{
 				width,
-				backgroundColor
+				backgroundColor: lblack
 			}}>
 				<ul style={{
 					listStyle: 'none',
