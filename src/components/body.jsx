@@ -11,9 +11,9 @@ class Body extends Component {
 		super(props);
 
 		this.values = Map({
-			pug: require('./sample/pug.txt'),
-			scss: require('./sample/scss.txt'),
-			javascript: require('./sample/js.txt')
+			pug: localStorage.getItem('editor-pug') || require('./sample/pug.txt'),
+			scss: localStorage.getItem('editor-scss') || require('./sample/scss.txt'),
+			javascript: localStorage.getItem('editor-javascript') || require('./sample/js.txt')
 		});
 	}
 

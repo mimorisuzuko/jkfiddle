@@ -53,6 +53,7 @@ module.exports = class Editor extends Component {
 		const value = editor.getValue();
 
 		if (_value === value) { return; }
+		localStorage.setItem(`editor-${language}`, value);
 		onChange(language, value);
 	}
 
