@@ -28,7 +28,7 @@ class App extends Component {
 				width: '100%',
 				height: '100%'
 			}}>
-				<Side width={sideWidth} items={items} />
+				<Side width={sideWidth} items={items} onClickItem={this.onClickItem.bind(this)} />
 				<Body content={content} dwidth={sideWidth} />
 			</div>
 		);
@@ -40,6 +40,15 @@ class App extends Component {
 	 */
 	openItemFromMenu(e, args) {
 		const {index} = args;
+		const {state: {items}} = this;
+
+		this.setState({ items: items.set('index', index) });
+	}
+
+	/**
+	 * @param {number} index
+	 */
+	onClickItem(index) {
 		const {state: {items}} = this;
 
 		this.setState({ items: items.set('index', index) });

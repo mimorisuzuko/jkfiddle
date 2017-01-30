@@ -8,9 +8,10 @@ class Side extends Component {
 		const {props: {width, items}} = this;
 		const index = items.get('index');
 		const contents = _.map(items.get('contents'), ({display}, i) => (
-			<li style={{
+			<li onClick={this.onClickItem.bind(this, i)} style={{
 				color: i === index ? white : dwhite,
-				paddingLeft: 5
+				paddingLeft: 5,
+				cursor: 'pointer'
 			}}>
 				# {display}
 			</li>
@@ -24,12 +25,23 @@ class Side extends Component {
 				<ul style={{
 					listStyle: 'none',
 					padding: 0,
-					margin: 0
+					margin: 0,
+					webkitUserSelect: 'none',
+					fontFamily: 'sans-serif'
 				}}>
 					{contents}
 				</ul>
 			</div>
 		);
+	}
+
+	/**
+	 * @param {number} index
+	 */
+	onClickItem(index) {
+		const {props: {onClickItem}} = this;
+
+		onClickItem(index);
 	}
 }
 
