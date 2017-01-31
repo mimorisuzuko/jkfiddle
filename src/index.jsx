@@ -19,7 +19,7 @@ class App extends Component {
 		const {state: {items}} = this;
 		const index = items.get('index');
 		const content = items.get('contents')[index];
-		const sideWidth = 68;
+		const sideWidth = 70;
 
 		return (
 			<div style={{

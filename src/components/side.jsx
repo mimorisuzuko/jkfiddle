@@ -16,9 +16,12 @@ class Side extends Component {
 					padding: '3px 6px',
 					fontSize: '0.8em',
 					cursor: 'pointer',
+					marginRight: 5,
+					borderTopRightRadius: 4,
+					borderBottomRightRadius: 4,
 					backgroundColor: selected ? llblack : lblack
 				}}>
-					# {display}
+					#{i + 1} {display}
 				</li>
 			);
 		});
@@ -30,7 +33,7 @@ class Side extends Component {
 			}}>
 				<ul style={{
 					listStyle: 'none',
-					padding: 0,
+					padding: '10px 0',
 					margin: 0,
 					webkitUserSelect: 'none',
 					fontFamily: 'sans-serif'
