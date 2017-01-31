@@ -20,32 +20,19 @@ module.exports = class Editor extends Component {
 		const {id} = this;
 
 		return (
-			<div id={id} style={{
-				width: '100%',
-				height: '100%'
-			}}>
+			<div id={id}>
 			</div>
 		);
 	}
 
 	/**
-	 * @param {{value: string, language: string}} nextProps
-	 */
-	shouldComponentUpdate(nextProps) {
-		const {language: nextLanguage} = nextProps;
-		const {props: {language}} = this;
-
-		return false;
-	}
-
-	/**
-	 * @param {{value: string, language: string}} nextProps
+	 * @param {{value: string, language: string, width: number, height: number}} nextProps
 	 */
 	componentWillReceiveProps(nextProps) {
-		const {value, language} = nextProps;
+		const {value, language, width, height} = nextProps;
 		const {editor} = this;
 
-		this.create(language, value);
+		this.create(language, value, width, height);
 	}
 
 	onKeyUp() {
@@ -60,8 +47,10 @@ module.exports = class Editor extends Component {
 	/**
 	 * @param {string} language
 	 * @param {string} value
+	 * @param {number} width
+	 * @param {number} height
 	 */
-	create(language, value) {
+	create(language, value, width = 0, height = 0) {
 		const {$element, editor: _editor} = this;
 
 		// Clear the editor
@@ -70,6 +59,8 @@ module.exports = class Editor extends Component {
 		}
 		language = language === 'pug' ? 'jade' : language;
 		$element.innerText = '';
+		$element.style.width = `${width}px`;
+		$element.style.height = `${height}px`;
 
 		// Re-create the editor
 		const editor = monaco.editor.create($element, {
@@ -84,7 +75,7 @@ module.exports = class Editor extends Component {
 
 	componentDidMount() {
 		const {
-			props: {value, language},
+			props: {value, language, editorDidMount},
 			id,
 		} = this;
 
@@ -94,7 +85,7 @@ module.exports = class Editor extends Component {
 
 		amdRequire(['vs/editor/editor.main'], () => {
 			this.$element = document.getElementById(id);
-			this.create(language, value);
+			editorDidMount();
 		});
 	}
 };
