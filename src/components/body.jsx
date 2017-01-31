@@ -60,7 +60,7 @@ class Body extends Component {
 				height: '100%',
 				overflowY: 'hidden'
 			}}>
-				{name === 'view' ? html : editor}
+				{name === 'result' ? html : editor}
 			</div>
 		);
 	}

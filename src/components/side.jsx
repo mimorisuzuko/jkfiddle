@@ -13,7 +13,7 @@ class Side extends Component {
 			return (
 				<li onClick={this.onClickItem.bind(this, i)} style={{
 					color: selected ? white : dwhite,
-					padding: '3px 6px',
+					padding: '2px 4px',
 					fontSize: '0.8em',
 					cursor: 'pointer',
 					marginRight: 5,
