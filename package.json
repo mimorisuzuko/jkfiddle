@@ -1,7 +1,7 @@
 {
   "name": "jkfiddle",
   "version": "0.0.1",
-  "description": "Test your JavaScript, SCSS, Pug on Electron",
+  "description": "Test your JavaScript, SCSS and Pug on Electron",
   "main": "app/index.js",
   "scripts": {
     "pug": "./node_modules/.bin/pug --hierarchy -o app/dst/ src/",

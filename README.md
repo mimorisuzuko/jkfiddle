@@ -1,1 +1,1 @@
-# JKFiddle: Test your JavaScript, SCSS, Pug on Electron
+# JKFiddle: Test your JavaScript, SCSS and Pug on Electron
