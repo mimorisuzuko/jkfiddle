@@ -6,18 +6,28 @@ const {ipcRenderer} = electron;
 
 module.exports = class HTMLRender extends Component {
 	render() {
-		const {props: {pug, scss, javascript}} = this;
-		const $html = document.createElement('html');
-		$html.innerHTML = ipcRenderer.sendSync('pug', { value: pug });
-		const $style = document.createElement('style');
-		$style.innerHTML = ipcRenderer.sendSync('scss', { value: scss });
-		$html.querySelector('head').appendChild($style);
-		const $script = document.createElement('script');
-		$script.innerHTML = javascript;
-		$html.querySelector('body').appendChild($script);
+		const {props: {pug, scss, js}} = this;
+		const [
+			{status: htmlStatus, result: htmlResult},
+			{status: cssStatus, result: cssResult},
+			{status: jsStatus, result: jsResult}
+		] = ipcRenderer.sendSync('compile', [pug, scss, js]);
+		let srcDoc = '';
+
+		if (_.every([htmlStatus, cssStatus, jsStatus], (a) => a === 'success')) {
+			const $html = document.createElement('html');
+			$html.innerHTML = htmlResult;
+			const $style = document.createElement('style');
+			$style.innerHTML = cssResult;
+			$html.querySelector('head').appendChild($style);
+			const $script = document.createElement('script');
+			$script.innerHTML = jsResult;
+			$html.querySelector('body').appendChild($script);
+			srcDoc = $html.innerHTML;
+		}
 
 		return (
-			<iframe srcDoc={$html.innerHTML} style={{
+			<iframe srcDoc={srcDoc} style={{
 				display: 'block',
 				border: 'none',
 				width: '100%',

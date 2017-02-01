@@ -5,11 +5,11 @@ const {argv} = process;
 const {data: _data} = minimist(_.slice(argv, 2));
 const data = decodeURIComponent(_data);
 
-scss.render({ data }, (err, result) => {
+scss.render({ data }, (err, _result) => {
 	if (err) {
-		console.log(err);
+		console.error(JSON.stringify(err));
 	} else {
-		const {css} = result;
+		const {css: result} = _result;
 		console.log(result);
 	}
 });

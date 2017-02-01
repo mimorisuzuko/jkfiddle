@@ -44,7 +44,7 @@ class Body extends Component {
 		const scss = values.get('scss');
 		const jsString = values.get('javascript');
 		const editorValue = name === 'pug' ? pug : name === 'scss' ? scss : name === 'javascript' ? jsString : null;
-		const html = <HTMLRender pug={pug} scss={scss} javascript={jsString} />;
+		const html = <HTMLRender pug={pug} scss={scss} js={jsString} />;
 		const editor = <Editor
 			value={editorValue}
 			language={name}
