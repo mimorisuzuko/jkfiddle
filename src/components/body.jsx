@@ -3,8 +3,9 @@ const ReactDOM = require('react-dom');
 const libpath = require('path');
 const Immutable = require('immutable');
 const {Editor, EditorModel} = require('./editor.jsx');
-const HTMLRender = require('./htmlrender.jsx');
-const {Map} = Immutable;
+const {Balloon, BalloonModel} = require('./balloon.jsx');
+const {HTMLRender, HTMLRenderModel} = require('./htmlrender.jsx');
+const {Map, List} = Immutable;
 const {Component} = React;
 
 class Body extends Component {
@@ -16,9 +17,11 @@ class Body extends Component {
 			scss: localStorage.getItem('jkfiddle-scss') || require('./sample/scss.txt'),
 			javascript: localStorage.getItem('jkfiddle-javascript') || require('./sample/js.txt')
 		});
+
 		this.state = {
 			width: 0,
-			height: 0
+			height: 0,
+			balloons: List()
 		};
 
 		window.addEventListener('resize', this.onResize.bind(this));
@@ -37,14 +40,14 @@ class Body extends Component {
 	render() {
 		const {
 			props: {content: {name}, dwidth},
-			state: {width, height},
+			state: {width, height, balloons},
 			values
 		} = this;
 		const pug = values.get('pug');
 		const scss = values.get('scss');
 		const js = values.get('javascript');
 		const value = name === 'pug' ? pug : name === 'scss' ? scss : name === 'javascript' ? js : null;
-		const html = <HTMLRender pug={pug} scss={scss} js={js} />;
+		const html = <HTMLRender onError={this.onError.bind(this)} model={new HTMLRenderModel({ pug, scss, js })} />;
 		const editor = <Editor
 			model={new EditorModel({ width, height, value, language: name })}
 			onChange={this.onChangeEditor.bind(this)}
@@ -58,6 +61,13 @@ class Body extends Component {
 				overflowY: 'hidden'
 			}}>
 				{name === 'result' ? html : editor}
+				<div style={{
+					position: 'absolute',
+					right: 10,
+					bottom: 10
+				}}>
+					{balloons.map((a, i) => <Balloon model={a} remove={this.removeBalloon.bind(this, i)} />)}
+				</div>
 			</div>
 		);
 	}
@@ -71,6 +81,24 @@ class Body extends Component {
 		const value = model.get('value');
 
 		this.values = values.set(language, value);
+	}
+
+	/**
+	 * @param {number} index
+	 */
+	removeBalloon(index) {
+		const {state: {balloons}} = this;
+
+		this.setState({ balloons: balloons.filter((a, i) => i !== index) });
+	}
+
+	/**
+	 * @param {BalloonModel[]} models
+	 */
+	onError(models) {
+		const {state: {balloons}} = this;
+
+		this.setState({ balloons: balloons.concat(models) });
 	}
 }
 
