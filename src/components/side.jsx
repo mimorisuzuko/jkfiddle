@@ -5,10 +5,20 @@ const {Component} = React;
 
 class Side extends Component {
 	render() {
-		const {props: {width, items}} = this;
-		const index = items.get('index');
-		const contents = _.map(items.get('contents'), ({display}, i) => {
+		const {props: {width, items, index}} = this;
+		const contents = _.map(items, (name, i) => {
 			const selected = i === index;
+			let display = 'null';
+
+			if (name === 'pug') {
+				display = 'Pug';
+			} else if (name === 'scss') {
+				display = 'SCSS';
+			} else if (name === 'javascript') {
+				display = 'JS';
+			} else if (name === 'result') {
+				display = 'Result';
+			}
 
 			return (
 				<li onClick={this.onClickItem.bind(this, i)} style={{

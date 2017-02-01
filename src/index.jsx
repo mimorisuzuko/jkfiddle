@@ -4,21 +4,19 @@ const ReactDOM = require('react-dom');
 const {Component} = React;
 const Side = require('./components/side.jsx');
 const Body = require('./components/body.jsx');
-const ItemsModel = require('./items-model.jsx');
 
 class App extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { items: new ItemsModel() };
+		this.state = { items: ['pug', 'scss', 'javascript', 'result'], index: 0 };
 
 		ipcRenderer.on('open-item-from-menu', this.openItemFromMenu.bind(this));
 	}
 
 	render() {
-		const {state: {items}} = this;
-		const index = items.get('index');
-		const content = items.get('contents')[index];
+		const {state: {items, index}} = this;
+		const content = items[index];
 		const sideWidth = 70;
 
 		return (
@@ -28,7 +26,7 @@ class App extends Component {
 				width: '100%',
 				height: '100%'
 			}}>
-				<Side width={sideWidth} items={items} onClickItem={this.onClickItem.bind(this)} />
+				<Side width={sideWidth} items={items} index={index} onClickItem={this.onClickItem.bind(this)} />
 				<Body content={content} dwidth={sideWidth} />
 			</div>
 		);
@@ -40,18 +38,15 @@ class App extends Component {
 	 */
 	openItemFromMenu(e, args) {
 		const {index} = args;
-		const {state: {items}} = this;
 
-		this.setState({ items: items.set('index', index) });
+		this.setState({ index });
 	}
 
 	/**
 	 * @param {number} index
 	 */
 	onClickItem(index) {
-		const {state: {items}} = this;
-
-		this.setState({ items: items.set('index', index) });
+		this.setState({ index });
 	}
 }
 

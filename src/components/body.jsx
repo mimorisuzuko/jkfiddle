@@ -39,17 +39,17 @@ class Body extends Component {
 
 	render() {
 		const {
-			props: {content: {name}, dwidth},
+			props: {content, dwidth},
 			state: {width, height, balloons},
 			values
 		} = this;
 		const pug = values.get('pug');
 		const scss = values.get('scss');
 		const js = values.get('javascript');
-		const value = name === 'pug' ? pug : name === 'scss' ? scss : name === 'javascript' ? js : null;
+		const value = content === 'pug' ? pug : content === 'scss' ? scss : content === 'javascript' ? js : null;
 		const html = <HTMLRender onError={this.onError.bind(this)} model={new HTMLRenderModel({ pug, scss, js })} />;
 		const editor = <Editor
-			model={new EditorModel({ width, height, value, language: name })}
+			model={new EditorModel({ width, height, value, language: content })}
 			onChange={this.onChangeEditor.bind(this)}
 			editorDidMount={this.resize.bind(this)}
 			/>;
@@ -60,7 +60,7 @@ class Body extends Component {
 				height: '100%',
 				overflowY: 'hidden'
 			}}>
-				{name === 'result' ? html : editor}
+				{content === 'result' ? html : editor}
 				<div style={{
 					position: 'absolute',
 					right: 10,

@@ -1,8 +1,5 @@
 const _ = require('lodash');
-const fs = require('fs');
-const libpath = require('path');
 const {Menu, shell, app} = require('electron');
-const json = JSON.parse(fs.readFileSync(libpath.join(__dirname, '../common/items.json')));
 
 const menu = [
 	{
@@ -180,7 +177,24 @@ if (process.platform === 'darwin') {
 		{
 			type: 'separator'
 		}
-	], _.map(json, ({display}, i) => ({
+	], _.map([
+		{
+			name: 'pug',
+			display: 'Pug'
+		},
+		{
+			name: 'scss',
+			display: 'SCSS'
+		},
+		{
+			name: 'javascript',
+			display: 'JS'
+		},
+		{
+			"name": 'result',
+			"display": 'Result'
+		}
+	], ({display}, i) => ({
 		label: display,
 		accelerator: `CmdOrCtrl+${i + 1}`,
 		click(item, focusedWindow) {
