@@ -5,7 +5,7 @@ const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
 const {Component} = React;
-const {Record} = Immutable;
+const {Record, Map} = Immutable;
 
 class EditorModel extends Record({ width: 0, height: 0, value: '', language: '' }) { }
 
@@ -29,9 +29,11 @@ class Editor extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		const {model} = nextProps;
+		const {model: nextModel} = nextProps;
+		const {editor, props: {model}} = this;
 
-		this.create(model);
+		if (editor && Immutable.is(Map(nextModel), Map(model))) { return; }
+		this.create(nextModel);
 	}
 
 	onKeyUp() {
