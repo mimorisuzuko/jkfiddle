@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const libpath = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const {DefinePlugin, optimize: {UglifyJsPlugin}} = webpack;
 const dst = 'app/dst';
 
 module.exports = {
@@ -18,6 +19,10 @@ module.exports = {
 				query: {
 					presets: ['react', 'es2015'],
 				}
+			},
+			{
+				test: /\.txt$/,
+				loader: 'raw-loader'
 			}
 		]
 	},
@@ -31,12 +36,12 @@ module.exports = {
 			dry: false,
 			exclude: ['index.html', 'index.css']
 		}),
-		new webpack.DefinePlugin({
+		new DefinePlugin({
 			'process.env': {
 				NODE_ENV: JSON.stringify('production')
 			}
 		}),
-		new webpack.optimize.UglifyJsPlugin({
+		new UglifyJsPlugin({
 			compress: {
 				warnings: false
 			},
@@ -45,6 +50,13 @@ module.exports = {
 	],
 	externals: {
 		'react': 'React',
-		'react-dom': 'ReactDOM'
+		'react-dom': 'ReactDOM',
+		'immutable': 'Immutable',
+		'lodash': '_'
+	},
+	target: 'electron',
+	node: {
+		__filename: false,
+		__dirname: false
 	}
 };

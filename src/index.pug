@@ -4,8 +4,13 @@ html
 		meta(charset='utf-8')
 		title JKFiddle: Test your JavaScript, SCSS, Pug on Electron
 		link(rel='stylesheet' href='index.css')
+		script const nodeRequire = global.require;
+		script(src='../../node_modules/monaco-editor/min/vs/loader.js')
+		script const amdRequire = global.require;global.require = nodeRequire;
 		script(src='../../node_modules/react/dist/react-with-addons.min.js')
 		script(src='../../node_modules/react-dom/dist/react-dom.min.js')
+		script(src='../../node_modules/immutable/dist/immutable.min.js')
+		script(src='../../node_modules/lodash/lodash.min.js')
 	body
 		main
 		script(src='index.js')
