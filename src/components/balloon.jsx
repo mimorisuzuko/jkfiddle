@@ -7,8 +7,37 @@ const {Component} = React;
 class BalloonModel extends Record({ title: '', body: '' }) { }
 
 class Balloon extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { opacity: 1 };
+	}
+
+	fadeOut() {
+		const {
+			state: {opacity: _opacity},
+			props: {remove}
+		} = this;
+
+		const opacity = _opacity - 0.01;
+
+		if (opacity < 0) {
+			remove();
+		} else {
+			this.setState({ opacity });
+			requestAnimationFrame(this.fadeOut.bind(this));
+		}
+	}
+
+	componentDidMount() {
+		this.fadeOut();
+	}
+
 	render() {
-		const {props: {model}} = this;
+		const {
+			props: {model},
+			state: {opacity}
+		} = this;
 
 		return (
 			<div onClick={this.onClick.bind(this)} style={{
@@ -19,7 +48,8 @@ class Balloon extends Component {
 				padding: '5px 10px',
 				marginBottom: 5,
 				borderRadius: 4,
-				cursor: 'pointer'
+				cursor: 'pointer',
+				opacity
 			}}>
 				<div>{model.get('title')}</div>
 				<div>{model.get('body')}</div>
