@@ -1,11 +1,15 @@
 self.module = undefined;
 self.process.browser = true;
 
+const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
 const {Component} = React;
+const {Record} = Immutable;
 
-module.exports = class Editor extends Component {
+class EditorModel extends Record({ width: 0, height: 0, value: '', language: '' }) { }
+
+class Editor extends Component {
 	constructor(props) {
 		super(props);
 
@@ -20,37 +24,36 @@ module.exports = class Editor extends Component {
 		const {id} = this;
 
 		return (
-			<div id={id}>
-			</div>
+			<div id={id}></div>
 		);
 	}
 
-	/**
-	 * @param {{value: string, language: string, width: number, height: number}} nextProps
-	 */
 	componentWillReceiveProps(nextProps) {
-		const {value, language, width, height} = nextProps;
-		const {editor} = this;
+		const {model} = nextProps;
 
-		this.create(language, value, width, height);
+		this.create(model);
 	}
 
 	onKeyUp() {
-		const {editor, props: {value: _value, language, onChange}} = this;
+		const {editor, props: {model, onChange}} = this;
+		const _value = model.get('value');
 		const value = editor.getValue();
 
 		if (_value === value) { return; }
+		const language = model.get('language');
+
 		localStorage.setItem(`jkfiddle-${language}`, value);
-		onChange(language, value);
+		onChange(model.merge({ language, value }));
 	}
 
 	/**
-	 * @param {string} language
-	 * @param {string} value
-	 * @param {number} width
-	 * @param {number} height
+	 * @param {EditorModel} model
 	 */
-	create(language, value, width = 0, height = 0) {
+	create(model) {
+		let language = model.get('language');
+		const value = model.get('value');
+		const width = model.get('width');
+		const height = model.get('height');
 		const {$element, editor: _editor} = this;
 
 		// Clear the editor
@@ -75,7 +78,7 @@ module.exports = class Editor extends Component {
 
 	componentDidMount() {
 		const {
-			props: {value, language, editorDidMount},
+			props: {editorDidMount},
 			id,
 		} = this;
 
@@ -88,4 +91,6 @@ module.exports = class Editor extends Component {
 			editorDidMount();
 		});
 	}
-};
+}
+
+module.exports = { EditorModel, Editor };

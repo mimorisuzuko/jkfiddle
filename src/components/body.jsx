@@ -2,7 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const libpath = require('path');
 const Immutable = require('immutable');
-const Editor = require('./editor.jsx');
+const {Editor, EditorModel} = require('./editor.jsx');
 const HTMLRender = require('./htmlrender.jsx');
 const {Map} = Immutable;
 const {Component} = React;
@@ -42,14 +42,11 @@ class Body extends Component {
 		} = this;
 		const pug = values.get('pug');
 		const scss = values.get('scss');
-		const jsString = values.get('javascript');
-		const editorValue = name === 'pug' ? pug : name === 'scss' ? scss : name === 'javascript' ? jsString : null;
-		const html = <HTMLRender pug={pug} scss={scss} js={jsString} />;
+		const js = values.get('javascript');
+		const value = name === 'pug' ? pug : name === 'scss' ? scss : name === 'javascript' ? js : null;
+		const html = <HTMLRender pug={pug} scss={scss} js={js} />;
 		const editor = <Editor
-			value={editorValue}
-			language={name}
-			width={width}
-			height={height}
+			model={new EditorModel({ width, height, value, language: name })}
 			onChange={this.onChangeEditor.bind(this)}
 			editorDidMount={this.resize.bind(this)}
 			/>;
@@ -66,11 +63,12 @@ class Body extends Component {
 	}
 
 	/**
-	 * @param {string} language
-	 * @param {string} value
+	 * @param {EditorModel} model
 	 */
-	onChangeEditor(language, value) {
+	onChangeEditor(model) {
 		const {values} = this;
+		const language = model.get('language');
+		const value = model.get('value');
 
 		this.values = values.set(language, value);
 	}
