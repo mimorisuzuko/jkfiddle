@@ -10,6 +10,6 @@ scss.render({ data }, (err, _result) => {
 		console.error(JSON.stringify(err));
 	} else {
 		const {css: result} = _result;
-		console.log(result);
+		console.log(result.toString());
 	}
 });
