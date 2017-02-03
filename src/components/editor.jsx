@@ -44,7 +44,7 @@ class Editor extends Component {
 		this.create(nextProps);
 	}
 
-	onKeyUp() {
+	onDidChangeCursorPosition() {
 		const {editor, props: {model, onChange}} = this;
 		const _value = model.get('value');
 		const value = editor.getValue();
@@ -83,9 +83,9 @@ class Editor extends Component {
 			language,
 			theme: 'vs-dark'
 		});
-		editor.onKeyUp(this.onKeyUp.bind(this));
 		editor.focus();
 		editor.setPosition({ column, lineNumber });
+		editor.onDidChangeCursorPosition(this.onDidChangeCursorPosition.bind(this));
 
 		this.editor = editor;
 	}
