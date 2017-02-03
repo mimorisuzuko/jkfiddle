@@ -12,10 +12,10 @@ class Body extends Component {
 	constructor(props) {
 		super(props);
 
-		this.values = Map({
-			pug: localStorage.getItem('jkfiddle-pug') || require('./sample/pug.txt'),
-			scss: localStorage.getItem('jkfiddle-scss') || require('./sample/scss.txt'),
-			javascript: localStorage.getItem('jkfiddle-javascript') || require('./sample/js.txt')
+		this.editors = Map({
+			pug: new EditorModel({ value: localStorage.getItem('jkfiddle-pug') || require('./sample/pug.txt'), language: 'pug' }),
+			scss: new EditorModel({ value: localStorage.getItem('jkfiddle-scss') || require('./sample/scss.txt'), language: 'scss' }),
+			javascript: new EditorModel({ value: localStorage.getItem('jkfiddle-javascript') || require('./sample/javascript.txt'), language: 'javascript' })
 		});
 
 		this.state = {
@@ -39,20 +39,21 @@ class Body extends Component {
 
 	render() {
 		const {
-			props: {content, dwidth},
+			props: {language, dwidth},
 			state: {width, height, balloons},
-			values
+			editors
 		} = this;
-		const pug = values.get('pug');
-		const scss = values.get('scss');
-		const js = values.get('javascript');
-		const value = content === 'pug' ? pug : content === 'scss' ? scss : content === 'javascript' ? js : null;
+		const pug = editors.get('pug').get('value');
+		const scss = editors.get('scss').get('value');
+		const js = editors.get('javascript').get('value');
 		const html = <HTMLRender onError={this.onError.bind(this)} model={new HTMLRenderModel({ pug, scss, js })} />;
-		const editor = <Editor
-			model={new EditorModel({ width, height, value, language: content })}
+		const editor = language === 'result' ? null : <Editor
+			model={editors.get(language)}
 			onChange={this.onChangeEditor.bind(this)}
 			editorDidMount={this.resize.bind(this)}
-			/>;
+			width={width}
+			height={height}
+		/>;
 
 		return (
 			<div style={{
@@ -60,7 +61,7 @@ class Body extends Component {
 				height: '100%',
 				overflowY: 'hidden'
 			}}>
-				{content === 'result' ? html : editor}
+				{language === 'result' ? html : editor}
 				<div style={{
 					position: 'absolute',
 					right: 10,
@@ -76,11 +77,10 @@ class Body extends Component {
 	 * @param {EditorModel} model
 	 */
 	onChangeEditor(model) {
-		const {values} = this;
+		const {editors} = this;
 		const language = model.get('language');
-		const value = model.get('value');
 
-		this.values = values.set(language, value);
+		this.editors = editors.set(language, model);
 	}
 
 	/**

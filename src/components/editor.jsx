@@ -1,13 +1,14 @@
 self.module = undefined;
 self.process.browser = true;
 
+const _ = require('lodash');
 const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
 const {Component} = React;
 const {Record, Map} = Immutable;
 
-class EditorModel extends Record({ width: 0, height: 0, value: '', language: '' }) { }
+class EditorModel extends Record({ value: '', language: '' }) { }
 
 class Editor extends Component {
 	constructor(props) {
@@ -28,12 +29,19 @@ class Editor extends Component {
 		);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		const {model: nextModel} = nextProps;
-		const {editor, props: {model}} = this;
-
-		if (editor && Immutable.is(Map(nextModel), Map(model))) { return; }
-		this.create(nextModel);
+	componentWillReceiveProps(_nextProps) {
+		const {editor, props: _props} = this;
+		const nextProps = _.cloneDeep(_nextProps);
+		const props = _.cloneDeep(_props);
+		
+		_.forEach([props, nextProps], (a) => {
+			_.forEach(_.toPairs(a), ([k, v]) => {
+				if (typeof v !== 'function') { return; }
+				delete a[k];
+			});
+		});
+		if (editor && Immutable.is(Map(nextProps), Map(props))) { return; }
+		this.create(nextProps);
 	}
 
 	onKeyUp() {
@@ -49,13 +57,12 @@ class Editor extends Component {
 	}
 
 	/**
-	 * @param {EditorModel} model
+	 * @param {{model: EditorModel, width: number, height: number}} props
 	 */
-	create(model) {
+	create(props) {
+		const {model, width, height} = props;
 		let language = model.get('language');
 		const value = model.get('value');
-		const width = model.get('width');
-		const height = model.get('height');
 		const {$element, editor: _editor} = this;
 
 		// Clear the editor
