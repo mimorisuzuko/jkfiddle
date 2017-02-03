@@ -85,7 +85,6 @@ class Editor extends Component {
 		});
 		editor.onKeyUp(this.onKeyUp.bind(this));
 		editor.focus();
-		console.log(column, lineNumber);
 		editor.setPosition({ column, lineNumber });
 
 		this.editor = editor;
