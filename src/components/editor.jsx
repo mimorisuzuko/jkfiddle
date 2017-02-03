@@ -8,7 +8,7 @@ const React = require('react');
 const {Component} = React;
 const {Record, Map} = Immutable;
 
-class EditorModel extends Record({ value: '', language: '' }) { }
+class EditorModel extends Record({ value: '', language: '', lineNumber: 0, column: 0 }) { }
 
 class Editor extends Component {
 	constructor(props) {
@@ -33,7 +33,7 @@ class Editor extends Component {
 		const {editor, props: _props} = this;
 		const nextProps = _.cloneDeep(_nextProps);
 		const props = _.cloneDeep(_props);
-		
+
 		_.forEach([props, nextProps], (a) => {
 			_.forEach(_.toPairs(a), ([k, v]) => {
 				if (typeof v !== 'function') { return; }
@@ -51,9 +51,10 @@ class Editor extends Component {
 
 		if (_value === value) { return; }
 		const language = model.get('language');
+		const {lineNumber, column} = editor.getPosition();
 
 		localStorage.setItem(`jkfiddle-${language}`, value);
-		onChange(model.merge({ language, value }));
+		onChange(model.merge({ language, value, lineNumber, column }));
 	}
 
 	/**
@@ -63,6 +64,8 @@ class Editor extends Component {
 		const {model, width, height} = props;
 		let language = model.get('language');
 		const value = model.get('value');
+		const lineNumber = model.get('lineNumber');
+		const column = model.get('column');
 		const {$element, editor: _editor} = this;
 
 		// Clear the editor
@@ -81,6 +84,9 @@ class Editor extends Component {
 			theme: 'vs-dark'
 		});
 		editor.onKeyUp(this.onKeyUp.bind(this));
+		editor.focus();
+		console.log(column, lineNumber);
+		editor.setPosition({ column, lineNumber });
 
 		this.editor = editor;
 	}
