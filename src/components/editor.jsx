@@ -1,13 +1,14 @@
 self.module = undefined;
 self.process.browser = true;
 
+const _ = require('lodash');
 const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
 const {Component} = React;
 const {Record, Map} = Immutable;
 
-class EditorModel extends Record({ width: 0, height: 0, value: '', language: '' }) { }
+class EditorModel extends Record({ value: '', language: '', lineNumber: 0, column: 0 }) { }
 
 class Editor extends Component {
 	constructor(props) {
@@ -28,34 +29,40 @@ class Editor extends Component {
 		);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		const {model: nextModel} = nextProps;
-		const {editor, props: {model}} = this;
+	componentWillReceiveProps(_nextProps) {
+		const {editor, props: _props} = this;
+		const nextProps = _.cloneDeep(_nextProps);
+		const props = _.cloneDeep(_props);
 
-		if (editor && Immutable.is(Map(nextModel), Map(model))) { return; }
-		this.create(nextModel);
+		_.forEach([props, nextProps], (a) => {
+			_.forEach(_.toPairs(a), ([k, v]) => {
+				if (typeof v !== 'function') { return; }
+				delete a[k];
+			});
+		});
+		if (editor && Immutable.is(Map(nextProps), Map(props))) { return; }
+		this.create(nextProps);
 	}
 
-	onKeyUp() {
+	onDidChangeCursorPosition() {
 		const {editor, props: {model, onChange}} = this;
-		const _value = model.get('value');
 		const value = editor.getValue();
-
-		if (_value === value) { return; }
 		const language = model.get('language');
+		const {lineNumber, column} = editor.getPosition();
 
 		localStorage.setItem(`jkfiddle-${language}`, value);
-		onChange(model.merge({ language, value }));
+		onChange(model.merge({ language, value, lineNumber, column }));
 	}
 
 	/**
-	 * @param {EditorModel} model
+	 * @param {{model: EditorModel, width: number, height: number}} props
 	 */
-	create(model) {
+	create(props) {
+		const {model, width, height} = props;
 		let language = model.get('language');
 		const value = model.get('value');
-		const width = model.get('width');
-		const height = model.get('height');
+		const lineNumber = model.get('lineNumber');
+		const column = model.get('column');
 		const {$element, editor: _editor} = this;
 
 		// Clear the editor
@@ -73,7 +80,9 @@ class Editor extends Component {
 			language,
 			theme: 'vs-dark'
 		});
-		editor.onKeyUp(this.onKeyUp.bind(this));
+		editor.focus();
+		editor.setPosition({ column, lineNumber });
+		editor.onDidChangeCursorPosition(this.onDidChangeCursorPosition.bind(this));
 
 		this.editor = editor;
 	}

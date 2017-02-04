@@ -16,7 +16,7 @@ class App extends Component {
 
 	render() {
 		const {state: {items, index}} = this;
-		const content = items[index];
+		const language = items[index];
 		const sideWidth = 70;
 
 		return (
@@ -27,7 +27,7 @@ class App extends Component {
 				height: '100%'
 			}}>
 				<Side width={sideWidth} items={items} index={index} onClickItem={this.onClickItem.bind(this)} />
-				<Body content={content} dwidth={sideWidth} />
+				<Body language={language} dwidth={sideWidth} />
 			</div>
 		);
 	}
