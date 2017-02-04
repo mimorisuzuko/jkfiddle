@@ -98,7 +98,6 @@ class Body extends Component {
 
 		_.forEach(files, ({path}) => {
 			const extension = _.last(_.split(libpath.basename(path), '.'));
-			console.log(extension);
 			_.some(['pug', 'scss', 'js'], (a) => {
 				if (a !== extension) { return false; }
 				const value = fs.readFileSync(path, 'utf-8');
