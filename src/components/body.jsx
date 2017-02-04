@@ -2,6 +2,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const libpath = require('path');
 const Immutable = require('immutable');
+const _ = require('lodash');
+const fs = require('fs');
 const {Editor, EditorModel} = require('./editor.jsx');
 const {Balloon, BalloonModel} = require('./balloon.jsx');
 const {HTMLRender, HTMLRenderModel} = require('./htmlrender.jsx');
@@ -25,6 +27,11 @@ class Body extends Component {
 		};
 
 		window.addEventListener('resize', this.onResize.bind(this));
+	}
+
+	componentDidMount() {
+		document.addEventListener('dragover', this.onDragOver.bind(this));
+		document.addEventListener('drop', this.onDrop.bind(this));
 	}
 
 	resize() {
@@ -71,6 +78,38 @@ class Body extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	/**
+	 * @param {DragEvent} e
+	 */
+	onDragOver(e) {
+		e.preventDefault();
+	}
+
+	/**
+	 * @param {DragEvent} e
+	 */
+	onDrop(e) {
+		e.preventDefault();
+
+		const {dataTransfer: {files}} = e;
+		const {editors} = this;
+
+		_.forEach(files, ({path}) => {
+			const extension = _.last(_.split(libpath.basename(path), '.'));
+			console.log(extension);
+			_.some(['pug', 'scss', 'js'], (a) => {
+				if (a !== extension) { return false; }
+				const value = fs.readFileSync(path, 'utf-8');
+				const language = a === 'js' ? 'javascript' : a;
+				const editor = editors.get(language);
+				this.editors = this.editors.set(language, editor.set('value', value));
+				this.forceUpdate();
+
+				return true;
+			});
+		});
 	}
 
 	/**
