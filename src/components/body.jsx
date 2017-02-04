@@ -2,6 +2,9 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const libpath = require('path');
 const Immutable = require('immutable');
+const _ = require('lodash');
+const fs = require('fs');
+const {orange} = require('../color.jsx');
 const {Editor, EditorModel} = require('./editor.jsx');
 const {Balloon, BalloonModel} = require('./balloon.jsx');
 const {HTMLRender, HTMLRenderModel} = require('./htmlrender.jsx');
@@ -25,6 +28,11 @@ class Body extends Component {
 		};
 
 		window.addEventListener('resize', this.onResize.bind(this));
+	}
+
+	componentDidMount() {
+		document.addEventListener('dragover', this.onDragOver.bind(this));
+		document.addEventListener('drop', this.onDrop.bind(this));
 	}
 
 	resize() {
@@ -71,6 +79,47 @@ class Body extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	/**
+	 * @param {DragEvent} e
+	 */
+	onDragOver(e) {
+		e.preventDefault();
+	}
+
+	/**
+	 * @param {DragEvent} e
+	 */
+	onDrop(e) {
+		e.preventDefault();
+
+		const {dataTransfer: {files}} = e;
+		const {editors, state: {balloons: balloons}} = this;
+		const dballoons = [];
+
+		_.forEach(files, ({path}) => {
+			const basename = libpath.basename(path);
+			const extension = _.last(_.split(basename, '.'));
+			const hasUploaded = _.some(['pug', 'scss', 'js'], (a) => {
+				if (a !== extension) { return false; }
+				const value = fs.readFileSync(path, 'utf-8');
+				const language = a === 'js' ? 'javascript' : a;
+				const editor = editors.get(language);
+
+				this.editors = this.editors.set(language, editor.set('value', value));
+				dballoons.push(new BalloonModel({ body: `Uploaded ${basename}` }));
+				return true;
+			});
+
+			if (!hasUploaded) {
+				dballoons.push(new BalloonModel({ body: `.${extension} is not supported`, color: orange }));
+			}
+		});
+
+		if (dballoons.length > 0) {
+			this.setState({ balloons: balloons.concat(dballoons) });
+		}
 	}
 
 	/**

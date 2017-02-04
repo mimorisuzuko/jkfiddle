@@ -46,10 +46,7 @@ class Editor extends Component {
 
 	onDidChangeCursorPosition() {
 		const {editor, props: {model, onChange}} = this;
-		const _value = model.get('value');
 		const value = editor.getValue();
-
-		if (_value === value) { return; }
 		const language = model.get('language');
 		const {lineNumber, column} = editor.getPosition();
 

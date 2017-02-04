@@ -5,11 +5,13 @@ const _llblack = _lblack.lighten(0.4);
 const _white = Color('rgb(212, 212, 212)');
 const _dwhite = _white.darken(0.4);
 const _blue = Color('rgb(0, 122, 204)');
+const _orange = Color('rgb(204, 122, 0)');
 const black = _black.toString();
 const lblack = _lblack.toString();
 const llblack = _llblack.toString();
 const white = _white.toString();
 const dwhite = _dwhite.toString();
 const blue = _blue.toString();
+const orange = _orange.toString();
 
-module.exports = { black, lblack, llblack, white, dwhite, blue};
+module.exports = { black, lblack, llblack, white, dwhite, blue, orange };

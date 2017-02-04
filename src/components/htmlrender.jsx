@@ -2,6 +2,7 @@ const _ = require('lodash');
 const React = require('react');
 const electron = require('electron');
 const Immutable = require('immutable');
+const {orange} = require('../color.jsx');
 const {BalloonModel} = require('./balloon.jsx');
 const {Record, Map} = Immutable;
 const {Component} = React;
@@ -39,13 +40,13 @@ class HTMLRender extends Component {
 		} else {
 			const errors = [];
 			if (htmlStatus === 'error') {
-				errors.push(new BalloonModel({ title: 'Pug', body: htmlResult }));
+				errors.push(new BalloonModel({ title: 'Pug', body: htmlResult, color: orange }));
 			}
 			if (cssStatus === 'error') {
-				errors.push(new BalloonModel({ title: 'SCSS', body: cssResult }));
+				errors.push(new BalloonModel({ title: 'SCSS', body: cssResult, color: orange }));
 			}
 			if (jsStatus === 'error') {
-				errors.push(new BalloonModel({ title: 'JS', body: jsResult }));
+				errors.push(new BalloonModel({ title: 'JS', body: jsResult, color: orange }));
 			}
 
 			onError(errors);
