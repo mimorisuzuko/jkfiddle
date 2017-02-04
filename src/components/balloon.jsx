@@ -4,22 +4,29 @@ const {blue} = require('../color.jsx');
 const {Record} = Immutable;
 const {Component} = React;
 
-class BalloonModel extends Record({ title: '', body: '', color: blue }) { }
+class BalloonModel extends Record({ title: '', body: '', color: blue }) {
+	static get LIFE() {
+		return 60;
+	}
+}
 
 class Balloon extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { opacity: 1 };
+		const {LIFE: life} = BalloonModel;
+
+		this.state = { opacity: 1, life };
 	}
 
 	fadeOut() {
+		const {LIFE: max} = BalloonModel;
 		const {
-			state: {opacity: _opacity},
+			state: {opacity: _opacity, life: _life},
 			props: {remove}
 		} = this;
-
-		const opacity = _opacity - 0.01;
+		const life = _life - 1;
+		const opacity = _opacity * (1 - (Math.cos(Math.PI * life / max) + 1) / 2);
 
 		if (opacity < 0) {
 			remove();
