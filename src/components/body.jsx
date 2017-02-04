@@ -94,21 +94,31 @@ class Body extends Component {
 		e.preventDefault();
 
 		const {dataTransfer: {files}} = e;
-		const {editors} = this;
+		const {editors, state: {balloons: balloons}} = this;
+		const dballoons = [];
 
 		_.forEach(files, ({path}) => {
-			const extension = _.last(_.split(libpath.basename(path), '.'));
-			_.some(['pug', 'scss', 'js'], (a) => {
+			const basename = libpath.basename(path);
+			const extension = _.last(_.split(basename, '.'));
+			const hasUploaded = _.some(['pug', 'scss', 'js'], (a) => {
 				if (a !== extension) { return false; }
 				const value = fs.readFileSync(path, 'utf-8');
 				const language = a === 'js' ? 'javascript' : a;
 				const editor = editors.get(language);
-				this.editors = this.editors.set(language, editor.set('value', value));
-				this.forceUpdate();
 
+				this.editors = this.editors.set(language, editor.set('value', value));
+				dballoons.push(new BalloonModel({ body: `Uploaded ${basename}` }));
 				return true;
 			});
+
+			if (!hasUploaded) {
+				dballoons.push(new BalloonModel({ body: `.${extension} is not supported` }));
+			}
 		});
+
+		if (dballoons.length > 0) {
+			this.setState({ balloons: balloons.concat(dballoons) });
+		}
 	}
 
 	/**
