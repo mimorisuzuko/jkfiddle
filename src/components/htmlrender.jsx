@@ -2,6 +2,7 @@ const _ = require('lodash');
 const React = require('react');
 const electron = require('electron');
 const Immutable = require('immutable');
+const ReactDOM = require('react-dom');
 const {orange} = require('../color.jsx');
 const {BalloonModel} = require('./balloon.jsx');
 const {Record, Map} = Immutable;
@@ -18,6 +19,16 @@ class HTMLRender extends Component {
 		return !Immutable.is(Map(nextModel), Map(model));
 	}
 
+	componentDidMount() {
+		const $e = ReactDOM.findDOMNode(this);
+
+		$e.addEventListener('console-message', (e) => {
+			const {message} = e;
+
+			console.log(message);
+		});
+	}
+
 	render() {
 		const {props: {model, onError}} = this;
 		const [
@@ -25,7 +36,7 @@ class HTMLRender extends Component {
 			{status: cssStatus, result: cssResult},
 			{status: jsStatus, result: jsResult}
 		] = ipcRenderer.sendSync('compile', [model.get('pug'), model.get('scss'), model.get('js')]);
-		let srcDoc = '';
+		let src = '';
 
 		if (_.every([htmlStatus, cssStatus, jsStatus], (a) => a === 'success')) {
 			const $html = document.createElement('html');
@@ -36,7 +47,7 @@ class HTMLRender extends Component {
 			const $script = document.createElement('script');
 			$script.innerHTML = jsResult;
 			$html.querySelector('body').appendChild($script);
-			srcDoc = $html.innerHTML;
+			src = $html.innerHTML;
 		} else {
 			const errors = [];
 			if (htmlStatus === 'error') {
@@ -53,12 +64,7 @@ class HTMLRender extends Component {
 		}
 
 		return (
-			<iframe srcDoc={srcDoc} style={{
-				display: 'block',
-				border: 'none',
-				width: '100%',
-				height: '100%'
-			}}></iframe>
+			<webview src={`data:text/html,${encodeURIComponent(src)}`} nodeintegration={true} />
 		);
 	}
 }
