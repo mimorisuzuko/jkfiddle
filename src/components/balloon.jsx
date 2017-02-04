@@ -4,7 +4,7 @@ const {blue} = require('../color.jsx');
 const {Record} = Immutable;
 const {Component} = React;
 
-class BalloonModel extends Record({ title: '', body: '' }) { }
+class BalloonModel extends Record({ title: '', body: '', color: blue }) { }
 
 class Balloon extends Component {
 	constructor(props) {
@@ -38,13 +38,14 @@ class Balloon extends Component {
 			props: {model},
 			state: {opacity}
 		} = this;
+		const backgroundColor = model.get('color');
 
 		return (
 			<div onClick={this.onClick.bind(this)} style={{
 				color: 'white',
 				fontSize: '12',
 				fontFamily: 'sans-serif',
-				backgroundColor: blue,
+				backgroundColor,
 				padding: '5px 10px',
 				marginBottom: 5,
 				borderRadius: 4,

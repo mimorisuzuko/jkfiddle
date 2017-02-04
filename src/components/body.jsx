@@ -4,6 +4,7 @@ const libpath = require('path');
 const Immutable = require('immutable');
 const _ = require('lodash');
 const fs = require('fs');
+const {orange} = require('../color.jsx');
 const {Editor, EditorModel} = require('./editor.jsx');
 const {Balloon, BalloonModel} = require('./balloon.jsx');
 const {HTMLRender, HTMLRenderModel} = require('./htmlrender.jsx');
@@ -112,7 +113,7 @@ class Body extends Component {
 			});
 
 			if (!hasUploaded) {
-				dballoons.push(new BalloonModel({ body: `.${extension} is not supported` }));
+				dballoons.push(new BalloonModel({ body: `.${extension} is not supported`, color: orange }));
 			}
 		});
 
