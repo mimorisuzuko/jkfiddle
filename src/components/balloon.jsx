@@ -6,7 +6,7 @@ const {Component} = React;
 
 class BalloonModel extends Record({ title: '', body: '', color: blue }) {
 	static get LIFE() {
-		return 60;
+		return 1200;
 	}
 }
 
@@ -31,7 +31,7 @@ class Balloon extends Component {
 		if (opacity < 0) {
 			remove();
 		} else {
-			this.setState({ opacity });
+			this.setState({ opacity, life });
 			requestAnimationFrame(this.fadeOut.bind(this));
 		}
 	}
