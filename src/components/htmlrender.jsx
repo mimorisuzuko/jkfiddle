@@ -2,6 +2,7 @@ const _ = require('lodash');
 const React = require('react');
 const electron = require('electron');
 const Immutable = require('immutable');
+const ReactDOM = require('react-dom');
 const {orange} = require('../color.jsx');
 const {BalloonModel} = require('./balloon.jsx');
 const {Record, Map} = Immutable;
@@ -18,6 +19,18 @@ class HTMLRender extends Component {
 		return !Immutable.is(Map(nextModel), Map(model));
 	}
 
+	componentDidMount() {
+		const {refs: {$webview}} = this;
+
+		$webview.setAttribute('nodeintegration', true);
+	}
+
+	openDevTools() {
+		const {refs: {$webview}} = this;
+
+		$webview.openDevTools();
+	}
+
 	render() {
 		const {props: {model, onError}} = this;
 		const [
@@ -25,7 +38,7 @@ class HTMLRender extends Component {
 			{status: cssStatus, result: cssResult},
 			{status: jsStatus, result: jsResult}
 		] = ipcRenderer.sendSync('compile', [model.get('pug'), model.get('scss'), model.get('js')]);
-		let srcDoc = '';
+		let src = '';
 
 		if (_.every([htmlStatus, cssStatus, jsStatus], (a) => a === 'success')) {
 			const $html = document.createElement('html');
@@ -36,7 +49,7 @@ class HTMLRender extends Component {
 			const $script = document.createElement('script');
 			$script.innerHTML = jsResult;
 			$html.querySelector('body').appendChild($script);
-			srcDoc = $html.innerHTML;
+			src = `data:text/html;charset=utf-8,${encodeURIComponent($html.innerHTML)}`;
 		} else {
 			const errors = [];
 			if (htmlStatus === 'error') {
@@ -53,12 +66,29 @@ class HTMLRender extends Component {
 		}
 
 		return (
-			<iframe srcDoc={srcDoc} style={{
-				display: 'block',
-				border: 'none',
+			<div style={{
 				width: '100%',
-				height: '100%'
-			}}></iframe>
+				height: '100%',
+				position: 'relative'
+			}}>
+				<webview ref='$webview' src={src} style={{
+					width: '100%',
+					height: '100%'
+				}} />
+				<div onClick={this.openDevTools.bind(this)} style={{
+					position: 'absolute',
+					left: 10,
+					bottom: 10,
+					color: 'white',
+					padding: '4px 8px',
+					borderRadius: 4,
+					fontSize: 12,
+					cursor: 'pointer',
+					backgroundColor: 'rgba(0, 0, 0, 0.8)'
+				}}>
+					Open Devtools
+				</div>
+			</div>
 		);
 	}
 }

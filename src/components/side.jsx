@@ -45,8 +45,7 @@ class Side extends Component {
 					listStyle: 'none',
 					padding: '10px 0',
 					margin: 0,
-					webkitUserSelect: 'none',
-					fontFamily: 'sans-serif'
+					webkitUserSelect: 'none'
 				}}>
 					{contents}
 				</ul>
