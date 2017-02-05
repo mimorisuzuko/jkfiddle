@@ -51,7 +51,6 @@ class Balloon extends Component {
 			<div onClick={this.onClick.bind(this)} style={{
 				color: 'white',
 				fontSize: '12',
-				fontFamily: 'sans-serif',
 				backgroundColor,
 				padding: '5px 10px',
 				marginBottom: 5,

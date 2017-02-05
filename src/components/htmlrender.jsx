@@ -20,13 +20,15 @@ class HTMLRender extends Component {
 	}
 
 	componentDidMount() {
-		const $e = ReactDOM.findDOMNode(this);
+		const {refs: {$webview}} = this;
 
-		$e.addEventListener('console-message', (e) => {
-			const {message} = e;
+		$webview.setAttribute('nodeintegration', true);
+	}
 
-			console.log(message);
-		});
+	openDevTools() {
+		const {refs: {$webview}} = this;
+
+		$webview.openDevTools();
 	}
 
 	render() {
@@ -64,7 +66,29 @@ class HTMLRender extends Component {
 		}
 
 		return (
-			<webview src={`data:text/html,${encodeURIComponent(src)}`} nodeintegration={true} />
+			<div style={{
+				width: '100%',
+				height: '100%',
+				position: 'relative'
+			}}>
+				<webview ref='$webview' src={`data:text/html,${encodeURIComponent(src)}`} style={{
+					width: '100%',
+					height: '100%'
+				}} />
+				<div onClick={this.openDevTools.bind(this)} style={{
+					position: 'absolute',
+					left: 10,
+					bottom: 10,
+					color: 'white',
+					padding: '4px 8px',
+					borderRadius: 4,
+					fontSize: 12,
+					cursor: 'pointer',
+					backgroundColor: 'rgba(0, 0, 0, 0.8)'
+				}}>
+					Open Devtools
+				</div>
+			</div>
 		);
 	}
 }
