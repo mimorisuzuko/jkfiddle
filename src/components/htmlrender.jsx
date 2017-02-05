@@ -49,7 +49,7 @@ class HTMLRender extends Component {
 			const $script = document.createElement('script');
 			$script.innerHTML = jsResult;
 			$html.querySelector('body').appendChild($script);
-			src = $html.innerHTML;
+			src = `data:text/html;charset=utf-8,${encodeURIComponent($html.innerHTML)}`;
 		} else {
 			const errors = [];
 			if (htmlStatus === 'error') {
@@ -71,7 +71,7 @@ class HTMLRender extends Component {
 				height: '100%',
 				position: 'relative'
 			}}>
-				<webview ref='$webview' src={`data:text/html,${encodeURIComponent(src)}`} style={{
+				<webview ref='$webview' src={src} style={{
 					width: '100%',
 					height: '100%'
 				}} />
