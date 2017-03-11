@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const libpath = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const {DefinePlugin, optimize: {UglifyJsPlugin}} = webpack;
+const { DefinePlugin, optimize: { UglifyJsPlugin } } = webpack;
 const dst = 'app/dst';
 
 module.exports = {
@@ -13,21 +13,21 @@ module.exports = {
 	module: {
 		loaders: [
 			{
-				test: /\.jsx$/,
+				test: /\.txt$/,
+				loader: 'raw-loader'
+			},
+			{
+				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
-				loader: 'babel',
+				loader: 'babel-loader',
 				query: {
 					presets: ['react', 'es2015'],
 				}
-			},
-			{
-				test: /\.txt$/,
-				loader: 'raw-loader'
 			}
 		]
 	},
 	resolve: {
-		extensions: ['', '.js', '.jsx']
+		extensions: ['.js', '.jsx']
 	},
 	plugins: [
 		new CleanWebpackPlugin([dst], {
@@ -54,9 +54,9 @@ module.exports = {
 		'immutable': 'Immutable',
 		'lodash': '_'
 	},
-	target: 'electron',
 	node: {
 		__filename: false,
 		__dirname: false
-	}
+	},
+	target: 'electron'
 };
