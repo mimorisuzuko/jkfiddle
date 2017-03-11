@@ -5,6 +5,9 @@ const _ = require('lodash');
 const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
+const electron = require('electron');
+const beautify = require('js-beautify');
+const { ipcRenderer } = electron;
 const { Component } = React;
 const { Record, Map } = Immutable;
 
@@ -19,6 +22,8 @@ class Editor extends Component {
 		this.editor = null;
 		/** @type {HTMLDivElement} */
 		this.$element = null;
+
+		ipcRenderer.on('format-document-from-menu', this.formatDocumentFromMenu.bind(this));
 	}
 
 	render() {
@@ -27,6 +32,27 @@ class Editor extends Component {
 		return (
 			<div id={id}></div>
 		);
+	}
+
+	formatDocumentFromMenu() {
+		const { props: { model, onChange }, editor } = this;
+
+		if (model.get('language') !== 'javascript') { return; }
+		const beautified = beautify(model.get('value'), { indent_size: 1, indent_char: '\t' });
+		const { lineNumber: _lineNumber, column: _column } = editor.getPosition();
+		const lines = _.slice(_.split(editor.getValue(), '\n'), 0, _lineNumber);
+
+		lines[_lineNumber - 1] = lines[_lineNumber - 1].substring(0, _column - 1);
+
+		const re = new RegExp(_.join(lines, '\n').replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/\s+/g, '\\s*'));
+		const [matched] = beautified.match(re);
+		const mlines = matched.split('\n');
+		const { length: lineNumber } = mlines;
+		const column = matched.length - _.join(_.slice(mlines, 0, lineNumber - 1)).length;
+
+		editor.setValue(beautified);
+		editor.setPosition({ column, lineNumber });
+		onChange(model.merge({ value: beautified, column, lineNumber }));
 	}
 
 	componentWillReceiveProps(_nextProps) {

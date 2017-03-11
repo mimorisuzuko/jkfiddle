@@ -131,7 +131,7 @@ class Body extends Component {
 	onChangeEditor(model) {
 		const { editors } = this;
 		const language = model.get('language');
-
+		
 		this.editors = editors.set(language, model);
 	}
 

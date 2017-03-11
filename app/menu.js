@@ -31,6 +31,17 @@ const menu = [
 			},
 			{
 				role: 'selectall'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Format Document',
+				accelerator: 'CmdOrCtrl+T',
+				click(item, focusedWindow) {
+					if (!focusedWindow) { return; }
+					focusedWindow.webContents.send('format-document-from-menu');
+				}
 			}
 		]
 	},

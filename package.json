@@ -32,6 +32,7 @@
   "dependencies": {
     "color": "^1.0.3",
     "immutable": "^4.0.0-rc.1",
+    "js-beautify": "^1.6.11",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "monaco-editor": "^0.8.3",
