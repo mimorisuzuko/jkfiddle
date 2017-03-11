@@ -44,11 +44,11 @@ class Editor extends Component {
 
 		lines[_lineNumber - 1] = lines[_lineNumber - 1].substring(0, _column - 1);
 
-		const re = new RegExp(_.join(lines, '\n').replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/\s+/g, '\\s*'));
+		const re = new RegExp(`^${_.join(lines, '\n').replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/[|{}()[\]]/g, '$&\t').replace(/\s+/g, '\\s*')}`);
 		const [matched] = beautified.match(re);
 		const mlines = matched.split('\n');
 		const { length: lineNumber } = mlines;
-		const column = matched.length - _.join(_.slice(mlines, 0, lineNumber - 1)).length;
+		const column = matched.length - _.join(_.slice(mlines, 0, lineNumber - 1)).length + (lineNumber === 1 ? 1 : 0);
 
 		editor.setValue(beautified);
 		editor.setPosition({ column, lineNumber });
