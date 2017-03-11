@@ -1,6 +1,6 @@
-const {app, ipcMain} = require('electron');
+const { app, ipcMain } = require('electron');
 const pug = require('pug');
-const {exec} = require('child_process');
+const { exec } = require('child_process');
 const Single = require('./single-window');
 const single = new Single();
 
@@ -14,7 +14,7 @@ const compilePug = (value) => new Promise((resolve) => {
 			status: 'success',
 			result: pug.render(value)
 		});
-	} catch ({line, column, msg}) {
+	} catch ({ line, column, msg }) {
 		resolve({
 			status: 'error',
 			result: `${line}:${column}: ${msg}`
@@ -29,7 +29,7 @@ const compilePug = (value) => new Promise((resolve) => {
 const compileSCSS = (value) => new Promise((resolve) => {
 	exec(`node app/scss.js --data ${encodeURIComponent(value)}`, (err, stdout, stderr) => {
 		if (stderr) {
-			const {line, column, message} = JSON.parse(stderr);
+			const { line, column, message } = JSON.parse(stderr);
 			resolve({
 				status: 'error',
 				result: `${line}:${column}: ${message}`

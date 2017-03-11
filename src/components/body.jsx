@@ -4,12 +4,12 @@ const libpath = require('path');
 const Immutable = require('immutable');
 const _ = require('lodash');
 const fs = require('fs');
-const {orange} = require('../color.jsx');
-const {Editor, EditorModel} = require('./editor.jsx');
-const {Balloon, BalloonModel} = require('./balloon.jsx');
-const {HTMLRender, HTMLRenderModel} = require('./htmlrender.jsx');
-const {Map, List} = Immutable;
-const {Component} = React;
+const { orange } = require('../color.jsx');
+const { Editor, EditorModel } = require('./editor.jsx');
+const { Balloon, BalloonModel } = require('./balloon.jsx');
+const { HTMLRender, HTMLRenderModel } = require('./htmlrender.jsx');
+const { Map, List } = Immutable;
+const { Component } = React;
 
 class Body extends Component {
 	constructor(props) {
@@ -26,7 +26,10 @@ class Body extends Component {
 			height: 0,
 			balloons: List()
 		};
-
+		this.onError = this.onError.bind(this);
+		this.onChangeEditor = this.onChangeEditor.bind(this);
+		this.resize = this.resize.bind(this);
+		this.removeBalloon = this.removeBalloon.bind(this);
 		window.addEventListener('resize', this.onResize.bind(this));
 	}
 
@@ -36,7 +39,7 @@ class Body extends Component {
 	}
 
 	resize() {
-		const {width, height} = ReactDOM.findDOMNode(this).getBoundingClientRect();
+		const { width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
 
 		this.setState({ width, height });
 	}
@@ -47,18 +50,18 @@ class Body extends Component {
 
 	render() {
 		const {
-			props: {language, dwidth},
-			state: {width, height, balloons},
+			props: { language, dwidth },
+			state: { width, height, balloons },
 			editors
 		} = this;
 		const pug = editors.get('pug').get('value');
 		const scss = editors.get('scss').get('value');
 		const js = editors.get('javascript').get('value');
-		const html = <HTMLRender onError={this.onError.bind(this)} model={new HTMLRenderModel({ pug, scss, js })} />;
+		const html = <HTMLRender onError={this.onError} model={new HTMLRenderModel({ pug, scss, js })} />;
 		const editor = language === 'result' ? null : <Editor
 			model={editors.get(language)}
-			onChange={this.onChangeEditor.bind(this)}
-			editorDidMount={this.resize.bind(this)}
+			onChange={this.onChangeEditor}
+			editorDidMount={this.resize}
 			width={width}
 			height={height}
 		/>;
@@ -75,7 +78,7 @@ class Body extends Component {
 					right: 10,
 					bottom: 10
 				}}>
-					{balloons.map((a, i) => <Balloon model={a} remove={this.removeBalloon.bind(this, i)} />)}
+					{balloons.map((a, i) => <Balloon model={a} remove={this.removeBalloon} index={i} />)}
 				</div>
 			</div>
 		);
@@ -94,11 +97,11 @@ class Body extends Component {
 	onDrop(e) {
 		e.preventDefault();
 
-		const {dataTransfer: {files}} = e;
-		const {editors, state: {balloons: balloons}} = this;
+		const { dataTransfer: { files } } = e;
+		const { editors, state: { balloons: balloons } } = this;
 		const dballoons = [];
 
-		_.forEach(files, ({path}) => {
+		_.forEach(files, ({ path }) => {
 			const basename = libpath.basename(path);
 			const extension = _.last(_.split(basename, '.'));
 			const hasUploaded = _.some(['pug', 'scss', 'js'], (a) => {
@@ -126,7 +129,7 @@ class Body extends Component {
 	 * @param {EditorModel} model
 	 */
 	onChangeEditor(model) {
-		const {editors} = this;
+		const { editors } = this;
 		const language = model.get('language');
 
 		this.editors = editors.set(language, model);
@@ -136,7 +139,7 @@ class Body extends Component {
 	 * @param {number} index
 	 */
 	removeBalloon(index) {
-		const {state: {balloons}} = this;
+		const { state: { balloons } } = this;
 
 		this.setState({ balloons: balloons.filter((a, i) => i !== index) });
 	}
@@ -145,7 +148,7 @@ class Body extends Component {
 	 * @param {BalloonModel[]} models
 	 */
 	onError(models) {
-		const {state: {balloons}} = this;
+		const { state: { balloons } } = this;
 
 		this.setState({ balloons: balloons.concat(models) });
 	}

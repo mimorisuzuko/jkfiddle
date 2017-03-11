@@ -1,6 +1,6 @@
 const libpath = require('path');
 const menu = require('./menu');
-const {BrowserWindow, Menu} = require('electron');
+const { BrowserWindow, Menu } = require('electron');
 
 module.exports = class SingleWindow {
 	constructor() {
@@ -22,12 +22,12 @@ module.exports = class SingleWindow {
 	onClosed() {
 		this.window = null;
 	}
-	
+
 	/**
 	 * @returns {boolean}
 	 */
 	exist() {
-		const {window} = this;
+		const { window } = this;
 
 		return window !== null;
 	}

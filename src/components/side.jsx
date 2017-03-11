@@ -1,11 +1,17 @@
 const _ = require('lodash');
 const React = require('react');
-const {lblack, llblack, white, dwhite} = require('../color.jsx');
-const {Component} = React;
+const { lblack, llblack, white, dwhite } = require('../color.jsx');
+const { Component } = React;
 
 class Side extends Component {
+	constructor(props) {
+		super(props);
+
+		this.onClickItem = this.onClickItem.bind(this);
+	}
+
 	render() {
-		const {props: {width, items, index}} = this;
+		const { props: { width, items, index } } = this;
 		const contents = _.map(items, (name, i) => {
 			const selected = i === index;
 			let display = 'null';
@@ -21,7 +27,7 @@ class Side extends Component {
 			}
 
 			return (
-				<li onClick={this.onClickItem.bind(this, i)} style={{
+				<li onClick={this.onClickItem} data-index={i} style={{
 					color: selected ? white : dwhite,
 					padding: '2px 4px',
 					fontSize: '0.8em',
@@ -54,12 +60,13 @@ class Side extends Component {
 	}
 
 	/**
-	 * @param {number} index
+	 * @param {MouseEvent} e
 	 */
-	onClickItem(index) {
-		const {props: {onClickItem}} = this;
+	onClickItem(e) {
+		const { currentTarget: { dataset: { index } } } = e;
+		const { props: { onClickItem } } = this;
 
-		onClickItem(index);
+		onClickItem(_.parseInt(index));
 	}
 }
 

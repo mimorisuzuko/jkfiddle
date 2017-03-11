@@ -5,8 +5,8 @@ const _ = require('lodash');
 const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
-const {Component} = React;
-const {Record, Map} = Immutable;
+const { Component } = React;
+const { Record, Map } = Immutable;
 
 class EditorModel extends Record({ value: '', language: '', lineNumber: 0, column: 0 }) { }
 
@@ -22,7 +22,7 @@ class Editor extends Component {
 	}
 
 	render() {
-		const {id} = this;
+		const { id } = this;
 
 		return (
 			<div id={id}></div>
@@ -30,7 +30,7 @@ class Editor extends Component {
 	}
 
 	componentWillReceiveProps(_nextProps) {
-		const {editor, props: _props} = this;
+		const { editor, props: _props } = this;
 		const nextProps = _.cloneDeep(_nextProps);
 		const props = _.cloneDeep(_props);
 
@@ -45,10 +45,10 @@ class Editor extends Component {
 	}
 
 	onDidChangeCursorPosition() {
-		const {editor, props: {model, onChange}} = this;
+		const { editor, props: { model, onChange } } = this;
 		const value = editor.getValue();
 		const language = model.get('language');
-		const {lineNumber, column} = editor.getPosition();
+		const { lineNumber, column } = editor.getPosition();
 
 		localStorage.setItem(`jkfiddle-${language}`, value);
 		onChange(model.merge({ language, value, lineNumber, column }));
@@ -58,12 +58,12 @@ class Editor extends Component {
 	 * @param {{model: EditorModel, width: number, height: number}} props
 	 */
 	create(props) {
-		const {model, width, height} = props;
+		const { model, width, height } = props;
 		let language = model.get('language');
 		const value = model.get('value');
 		const lineNumber = model.get('lineNumber');
 		const column = model.get('column');
-		const {$element, editor: _editor} = this;
+		const { $element, editor: _editor } = this;
 
 		// Clear the editor
 		if (_editor) {
@@ -89,7 +89,7 @@ class Editor extends Component {
 
 	componentDidMount() {
 		const {
-			props: {editorDidMount},
+			props: { editorDidMount },
 			id,
 		} = this;
 
