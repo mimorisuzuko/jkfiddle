@@ -2,41 +2,46 @@ const _ = require('lodash');
 const React = require('react');
 const electron = require('electron');
 const Immutable = require('immutable');
-const ReactDOM = require('react-dom');
-const {orange} = require('../color.jsx');
-const {BalloonModel} = require('./balloon.jsx');
-const {Record, Map} = Immutable;
-const {Component} = React;
-const {ipcRenderer} = electron;
+const { orange } = require('../color.jsx');
+const { BalloonModel } = require('./balloon.jsx');
+const { Record, Map } = Immutable;
+const { Component } = React;
+const { ipcRenderer } = electron;
 
 class HTMLRenderModel extends Record({ pug: '', scss: '', js: '' }) { }
 
 class HTMLRender extends Component {
+	constructor(props) {
+		super(props);
+
+		this.openDevTools = this.openDevTools.bind(this);
+	}
+
 	shouldComponentUpdate(nextProps) {
-		const {model: nextModel} = nextProps;
-		const {props: {model}} = this;
+		const { model: nextModel } = nextProps;
+		const { props: { model } } = this;
 
 		return !Immutable.is(Map(nextModel), Map(model));
 	}
 
 	componentDidMount() {
-		const {refs: {$webview}} = this;
+		const { refs: { $webview } } = this;
 
 		$webview.setAttribute('nodeintegration', true);
 	}
 
 	openDevTools() {
-		const {refs: {$webview}} = this;
+		const { refs: { $webview } } = this;
 
 		$webview.openDevTools();
 	}
 
 	render() {
-		const {props: {model, onError}} = this;
+		const { props: { model, onError } } = this;
 		const [
-			{status: htmlStatus, result: htmlResult},
-			{status: cssStatus, result: cssResult},
-			{status: jsStatus, result: jsResult}
+			{ status: htmlStatus, result: htmlResult },
+			{ status: cssStatus, result: cssResult },
+			{ status: jsStatus, result: jsResult }
 		] = ipcRenderer.sendSync('compile', [model.get('pug'), model.get('scss'), model.get('js')]);
 		let src = '';
 
@@ -75,7 +80,7 @@ class HTMLRender extends Component {
 					width: '100%',
 					height: '100%'
 				}} />
-				<div onClick={this.openDevTools.bind(this)} style={{
+				<div onClick={this.openDevTools} style={{
 					position: 'absolute',
 					left: 10,
 					bottom: 10,

@@ -1,8 +1,8 @@
 const React = require('react');
 const Immutable = require('immutable');
-const {blue} = require('../color.jsx');
-const {Record} = Immutable;
-const {Component} = React;
+const { blue } = require('../color.jsx');
+const { Record } = Immutable;
+const { Component } = React;
 
 class BalloonModel extends Record({ title: '', body: '', color: blue }) {
 	static get LIFE() {
@@ -14,16 +14,17 @@ class Balloon extends Component {
 	constructor(props) {
 		super(props);
 
-		const {LIFE: life} = BalloonModel;
+		const { LIFE: life } = BalloonModel;
 
 		this.state = { opacity: 1, life };
+		this.onClick = this.onClick.bind(this);
 	}
 
 	fadeOut() {
-		const {LIFE: max} = BalloonModel;
+		const { LIFE: max } = BalloonModel;
 		const {
-			state: {opacity: _opacity, life: _life},
-			props: {remove}
+			state: { opacity: _opacity, life: _life },
+			props: { remove }
 		} = this;
 		const life = _life - 1;
 		const opacity = _opacity * (1 - (Math.cos(Math.PI * life / max) + 1) / 2);
@@ -42,13 +43,13 @@ class Balloon extends Component {
 
 	render() {
 		const {
-			props: {model},
-			state: {opacity}
+			props: { model },
+			state: { opacity }
 		} = this;
 		const backgroundColor = model.get('color');
 
 		return (
-			<div onClick={this.onClick.bind(this)} style={{
+			<div onClick={this.onClick} style={{
 				color: 'white',
 				fontSize: '12',
 				backgroundColor,
@@ -65,9 +66,9 @@ class Balloon extends Component {
 	}
 
 	onClick() {
-		const {props: {remove}} = this;
+		const { props: { remove, index } } = this;
 
-		remove();
+		remove(index);
 	}
 }
 

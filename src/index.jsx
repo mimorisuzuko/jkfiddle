@@ -1,7 +1,7 @@
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const {Component} = React;
+const { Component } = React;
 const Side = require('./components/side.jsx');
 const Body = require('./components/body.jsx');
 
@@ -10,12 +10,12 @@ class App extends Component {
 		super(props);
 
 		this.state = { items: ['pug', 'scss', 'javascript', 'result'], index: 0 };
-
+		this.onClickItem = this.onClickItem.bind(this);
 		ipcRenderer.on('open-item-from-menu', this.openItemFromMenu.bind(this));
 	}
 
 	render() {
-		const {state: {items, index}} = this;
+		const { state: { items, index } } = this;
 		const language = items[index];
 		const sideWidth = 70;
 
@@ -26,7 +26,7 @@ class App extends Component {
 				width: '100%',
 				height: '100%'
 			}}>
-				<Side width={sideWidth} items={items} index={index} onClickItem={this.onClickItem.bind(this)} />
+				<Side width={sideWidth} items={items} index={index} onClickItem={this.onClickItem} />
 				<Body language={language} dwidth={sideWidth} />
 			</div>
 		);
@@ -37,7 +37,7 @@ class App extends Component {
 	 * @param {{index: number}} args
 	 */
 	openItemFromMenu(e, args) {
-		const {index} = args;
+		const { index } = args;
 
 		this.setState({ index });
 	}

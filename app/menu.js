@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {Menu, shell, app} = require('electron');
+const { shell, app } = require('electron');
 
 const menu = [
 	{
@@ -31,6 +31,17 @@ const menu = [
 			},
 			{
 				role: 'selectall'
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Format Document',
+				accelerator: 'CmdOrCtrl+T',
+				click(item, focusedWindow) {
+					if (!focusedWindow) { return; }
+					focusedWindow.webContents.send('format-document-from-menu');
+				}
 			}
 		]
 	},
@@ -191,10 +202,10 @@ if (process.platform === 'darwin') {
 			display: 'JS'
 		},
 		{
-			"name": 'result',
-			"display": 'Result'
+			name: 'result',
+			display: 'Result'
 		}
-	], ({display}, i) => ({
+	], ({ display }, i) => ({
 		label: display,
 		accelerator: `CmdOrCtrl+${i + 1}`,
 		click(item, focusedWindow) {

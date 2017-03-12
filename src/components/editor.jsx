@@ -5,8 +5,11 @@ const _ = require('lodash');
 const Immutable = require('immutable');
 const libpath = require('path');
 const React = require('react');
-const {Component} = React;
-const {Record, Map} = Immutable;
+const electron = require('electron');
+const beautify = require('js-beautify');
+const { ipcRenderer } = electron;
+const { Component } = React;
+const { Record, Map } = Immutable;
 
 class EditorModel extends Record({ value: '', language: '', lineNumber: 0, column: 0 }) { }
 
@@ -19,18 +22,41 @@ class Editor extends Component {
 		this.editor = null;
 		/** @type {HTMLDivElement} */
 		this.$element = null;
+
+		ipcRenderer.on('format-document-from-menu', this.formatDocumentFromMenu.bind(this));
 	}
 
 	render() {
-		const {id} = this;
+		const { id } = this;
 
 		return (
 			<div id={id}></div>
 		);
 	}
 
+	formatDocumentFromMenu() {
+		const { props: { model, onChange }, editor } = this;
+
+		if (model.get('language') !== 'javascript') { return; }
+		const beautified = beautify(model.get('value'), { indent_size: 1, indent_char: '\t' });
+		const { lineNumber: _lineNumber, column: _column } = editor.getPosition();
+		const lines = _.slice(_.split(editor.getValue(), '\n'), 0, _lineNumber);
+
+		lines[_lineNumber - 1] = lines[_lineNumber - 1].substring(0, _column - 1);
+
+		const re = new RegExp(`^${_.join(lines, '\n').replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/[|{}()[\]]/g, '$&\t').replace(/\s+/g, '\\s*')}`);
+		const [matched] = beautified.match(re);
+		const mlines = matched.split('\n');
+		const { length: lineNumber } = mlines;
+		const column = matched.length - _.join(_.slice(mlines, 0, lineNumber - 1)).length + (lineNumber === 1 ? 1 : 0);
+
+		editor.setValue(beautified);
+		editor.setPosition({ column, lineNumber });
+		onChange(model.merge({ value: beautified, column, lineNumber }));
+	}
+
 	componentWillReceiveProps(_nextProps) {
-		const {editor, props: _props} = this;
+		const { editor, props: _props } = this;
 		const nextProps = _.cloneDeep(_nextProps);
 		const props = _.cloneDeep(_props);
 
@@ -45,10 +71,10 @@ class Editor extends Component {
 	}
 
 	onDidChangeCursorPosition() {
-		const {editor, props: {model, onChange}} = this;
+		const { editor, props: { model, onChange } } = this;
 		const value = editor.getValue();
 		const language = model.get('language');
-		const {lineNumber, column} = editor.getPosition();
+		const { lineNumber, column } = editor.getPosition();
 
 		localStorage.setItem(`jkfiddle-${language}`, value);
 		onChange(model.merge({ language, value, lineNumber, column }));
@@ -58,12 +84,12 @@ class Editor extends Component {
 	 * @param {{model: EditorModel, width: number, height: number}} props
 	 */
 	create(props) {
-		const {model, width, height} = props;
+		const { model, width, height } = props;
 		let language = model.get('language');
 		const value = model.get('value');
 		const lineNumber = model.get('lineNumber');
 		const column = model.get('column');
-		const {$element, editor: _editor} = this;
+		const { $element, editor: _editor } = this;
 
 		// Clear the editor
 		if (_editor) {
@@ -89,7 +115,7 @@ class Editor extends Component {
 
 	componentDidMount() {
 		const {
-			props: {editorDidMount},
+			props: { editorDidMount },
 			id,
 		} = this;
 
