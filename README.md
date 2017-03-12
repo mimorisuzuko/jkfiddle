@@ -19,7 +19,8 @@ yarn start
 
 ### Shortcuts
 
-* ⌘ + ${n}: Move to a panel of Pug, SCSS, JavaScript or Result
+* `⌘ + ${n}`: Move to a panel of Pug, SCSS, JavaScript or Result
+* `⌘ + T`: Format a code (only JavaScript)
 
 ## Develop
 
