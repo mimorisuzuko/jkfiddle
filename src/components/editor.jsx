@@ -38,7 +38,7 @@ class Editor extends Component {
 		const { props: { model, onChange }, editor } = this;
 
 		if (model.get('language') !== 'javascript') { return; }
-		const beautified = beautify(model.get('value'), { indent_size: 1, indent_char: '\t' });
+		const beautified = beautify(editor.getValue(), { indent_size: 1, indent_char: '\t' });
 		const { lineNumber: _lineNumber, column: _column } = editor.getPosition();
 		const lines = _.slice(_.split(editor.getValue(), '\n'), 0, _lineNumber);
 
